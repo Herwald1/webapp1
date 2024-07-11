@@ -14,8 +14,6 @@ export default function DefaultLayout() {
     return (
        <>
        <Dashboard />
-
-       <Outlet />
        </>
     );
 

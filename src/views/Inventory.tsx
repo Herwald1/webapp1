@@ -1,22 +1,22 @@
 import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
-export default function Users(){
+export default function Inventory(){
     const dummyUsers = [
-        { id: 1, name: 'John Doe' },
-        { id: 2, name: 'Jane Smith' },
-        { id: 3, name: 'Bob Johnson' },
+        { id: 1, name: 'Shirt' },
+        { id: 2, name: 'pants' },
+        { id: 3, name: 'socks' },
     ];
 
     return (
         <div>
-            <h1>Users Page</h1>
+            <h1>Inventory Page</h1>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             <TableCell>ID</TableCell>
-                            <TableCell>Name</TableCell>
+                            <TableCell>Product Name</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

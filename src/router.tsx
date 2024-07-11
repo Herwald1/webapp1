@@ -6,6 +6,8 @@ import NotFound from "./views/NotFound";
 import DefaultLayout from "./components/layouts/DefaultLayout";
 import GuestLayout from "./components/layouts/GuestLayout";
 import Dashboard from "./views/DashBoard";
+import Inventory from "./views/Inventory";
+import DashBoardView from "./views/DashBoardView";
 
 const router = createBrowserRouter([
     {
@@ -14,16 +16,24 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Navigate to="/users"/>
+                element: <Navigate to="/dashboard"/>
             },
             {
-                path: "/Dashboard",
-                element: <Dashboard/>
+                path: "/dashboard",
+                element: <DashBoardView/>
             },
             {
                 path: "/users",
                 element: <Users />
             },
+            {
+                path: "/settings",
+                element: <Users />
+            },
+            {
+                path: "/inventory",
+                element: <Inventory />
+            }
         ]
     },
     {
