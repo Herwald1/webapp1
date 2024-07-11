@@ -4,7 +4,7 @@ This is my first project and I'm still figuring out where it can go for now.
 
 ## Description
 
-Provide a brief description of your project here.
+This Project aims to automate social media store processes and also aims to create a digital Inventory and privide store analytics. v2 of the project will consist of a delivery feature that will automate the delivery process of a given store.
 
 ## Features
 
