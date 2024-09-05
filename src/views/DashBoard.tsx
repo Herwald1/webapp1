@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -88,7 +89,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Dashboard() {
+export default function Dashboard({name, logout}: {name: string, logout: () => void}) {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -123,11 +124,12 @@ export default function Dashboard() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              
+              {name}
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
+            <IconButton color="inherit" onClick={logout}>
+              <Badge badgeContent={0} color="secondary">
+                <LogoutIcon />
+                {/* <NotificationsIcon /> */}
               </Badge>
             </IconButton>
           </Toolbar>

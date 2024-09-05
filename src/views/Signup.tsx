@@ -12,8 +12,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Formik, FormikProvider, useFormik } from 'formik';
+import { LoadingButton } from '@mui/lab';
+import { Account } from '../Types';
+import axiosClient from '../axios-client';
+import { useStateContext } from '../context/ContextProvider';
 
-function Copyright(props) {
+function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
@@ -31,14 +36,53 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+  const {setUser, setToken} = useStateContext();
+  const Submit = async (values: any) => {
+    console.log(values);
+    // combine first and last name into name
+    values.name = `${values.firstName} ${values.lastName}`;
+    const response = axiosClient.post('/signup', values);
+    return response;
   };
+
+  const formik = useFormik<Account>({
+    initialValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      password_confirmation: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      Submit(values).then((res) => {
+        setUser(res.data.user);
+        setToken(res.data.token);
+        alert('Sign Up Success');
+        formik.setSubmitting(false);
+        console.log(res);
+      })
+        .catch((err) => {
+          formik.setSubmitting(false);
+          if (err.response && err.response.status === 422) {
+            alert(`Validation Error: ${err.response.errors}`);
+          }
+        });
+    },
+  });
+
+  const {
+    handleSubmit,
+    handleChange,
+    values,
+    errors,
+    touched,
+    isSubmitting,
+    getFieldProps,
+    dirty,
+  } = formik;
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -58,73 +102,84 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
+
+          <FormikProvider value={formik}>
+            <form autoComplete='off' noValidate onSubmit={handleSubmit}>
+
+              <Box sx={{ mt: 3 }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      fullWidth
+                      label="First Name"
+                      {...getFieldProps('firstName')}
+                      error={Boolean(touched.firstName && errors.firstName)}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      required
+                      fullWidth
+                      label="Last Name"
+                      {...getFieldProps('lastName')}
+                      error={Boolean(touched.lastName && errors.lastName)}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      label="Email Address"
+                      type="email"
+                      {...getFieldProps('email')}
+                      error={Boolean(touched.email && errors.email)}
+
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      label="Password"
+                      type="password"
+                      {...getFieldProps('password')}
+                      error={Boolean(touched.password && errors.password)}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      label="Password Confirmation"
+                      type="password"
+                      {...getFieldProps('password_confirmation')}
+                      error={Boolean(touched.password && errors.password)}
+                    />
+                  </Grid>
+                </Grid>
+                <LoadingButton
+                  type="submit"
                   fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
+                  variant="contained"
+                  loading={isSubmitting}
+                  disabled={!dirty}
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  Sign Up
+                </LoadingButton>
+
+                <Grid container justifyContent="flex-end">
+                  <Grid item>
+                    <Link href="#" variant="body2">
+                      Already have an account? Sign in
+                    </Link>
+                  </Grid>
+                </Grid>
+              </Box>
+            </form>
+          </FormikProvider>
+
         </Box>
         <Copyright sx={{ mt: 5 }} />
       </Container>
